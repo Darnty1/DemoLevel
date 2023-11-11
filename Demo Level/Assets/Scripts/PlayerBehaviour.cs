@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour
 {
+    [Tooltip("Movementspeed of the Player")]
     public float movementSpeed = 5f;
+    [Tooltip("Turningspeed of the Player")]
     public float turningSpeed = 5f;
+    [Tooltip("The Strength of the player to push the enemies")]
+    public float pushForce = 10f;
+    [Tooltip("The Strenght of the enemies to push the player")]
+    public float enemyPushForce = 5f;
 
     private Rigidbody rb;
     // Start is called before the first frame update
@@ -25,5 +31,15 @@ public class PlayerBehaviour : MonoBehaviour
 
         rb.rotation *= rotation;
         rb.AddForce(transform.TransformDirection(movement) * movementSpeed);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Rigidbody otherRB = collision.gameObject.GetComponent<Rigidbody>();
+            otherRB.AddForce((otherRB.transform.position - transform.position) * pushForce, ForceMode.Impulse);
+            rb.AddForce((transform.position - otherRB.transform.position) * enemyPushForce, ForceMode.Impulse);
+        }
     }
 }
